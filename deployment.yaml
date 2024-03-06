@@ -17,6 +17,8 @@ spec:
         image: ghcr.io/chanwittt/demo-nginx:latest
         ports:
         - containerPort: 80
+      imagePullSecrets:
+      - name: github-package
 ---
 apiVersion: v1
 kind: Service
