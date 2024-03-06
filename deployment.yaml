@@ -17,8 +17,18 @@ spec:
         image: ghcr.io/chanwittt/demo-nginx:latest
         ports:
         - containerPort: 80
+        volumeMounts:
+        - mountPath: /etc/nginx
+          name: nginx-shared
+          readOnly: true
       imagePullSecrets:
       - name: github-package
+      volumes:
+      - name: nginx-shared
+        # mount /data/foo, but only if that directory already exists
+        hostPath:
+          path: /home/ubuntu/demo-nginx/nginx # directory location on host
+          type: Directory # this field is optional
 ---
 apiVersion: v1
 kind: Service
