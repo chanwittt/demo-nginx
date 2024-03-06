@@ -15,7 +15,7 @@ LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 # ENV PKG_RELEASE        1
 
 # Download your NGINX license certificate and key from the F5 customer portal (https://account.f5.com) and copy to the build context
-RUN --mount=type=secret,id=nginx-crt,dst=cert.crt \
+RUN --mount=type=secret,id=nginx-crt,dst=cert.pem \
     --mount=type=secret,id=nginx-key,dst=cert.key \
     set -x \
 # Create nginx user/group first, to be consistent throughout Docker variants
@@ -49,7 +49,7 @@ RUN --mount=type=secret,id=nginx-crt,dst=cert.crt \
         echo "key verification failed!"; \
         exit 1; \
     fi \
-    && cat cert.pem > /etc/apk/cert.crt \
+    && cat cert.pem > /etc/apk/cert.pem \
     && cat cert.key > /etc/apk/cert.key \
     && apk add -X "https://pkgs.nginx.com/plus/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
     && if [ -f "/etc/apk/keys/nginx_signing.rsa.pub" ]; then rm -f /etc/apk/keys/nginx_signing.rsa.pub; fi \
@@ -65,7 +65,6 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx /etc/nginx/
 
 EXPOSE 80
-EXPOSE 8080
 
 STOPSIGNAL SIGQUIT
 
