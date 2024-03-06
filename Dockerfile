@@ -15,7 +15,7 @@ LABEL maintainer="NGINX Docker Maintainers <docker-maint@nginx.com>"
 # ENV PKG_RELEASE        1
 
 # Download your NGINX license certificate and key from the F5 customer portal (https://account.f5.com) and copy to the build context
-RUN --mount=type=secret,id=nginx-crt,dst=cert.pem \
+RUN --mount=type=secret,id=nginx-crt,dst=cert.crt \
     --mount=type=secret,id=nginx-key,dst=cert.key \
     set -x \
 # Create nginx user/group first, to be consistent throughout Docker variants
@@ -26,19 +26,19 @@ RUN --mount=type=secret,id=nginx-crt,dst=cert.pem \
 # For an exhaustive list of supported modules and how to install them, see https://docs.nginx.com/nginx/admin-guide/dynamic-modules/dynamic-modules/
     && nginxPackages=" \
         nginx-plus \
-        nginx-plus=${NGINX_VERSION}-r${NGINX_PKG_RELEASE} \
-        nginx-plus-module-geoip \
-        nginx-plus-module-geoip=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-plus-module-image-filter \
-        nginx-plus-module-image-filter=${NGINX_VERSION}-r${PKG_RELEASE} \
+        # nginx-plus=${NGINX_VERSION}-r${NGINX_PKG_RELEASE} \
+        # nginx-plus-module-geoip \
+        # nginx-plus-module-geoip=${NGINX_VERSION}-r${PKG_RELEASE} \
+        # nginx-plus-module-image-filter \
+        # nginx-plus-module-image-filter=${NGINX_VERSION}-r${PKG_RELEASE} \
         nginx-plus-module-njs \
-        nginx-plus-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_PKG_RELEASE} \
-        nginx-plus-module-otel \
-        nginx-plus-module-otel=${NGINX_VERSION}.${OTEL_VERSION}-r${OTEL_PKG_RELEASE} \
-        nginx-plus-module-perl \
-        nginx-plus-module-perl=${NGINX_VERSION}-r${PKG_RELEASE} \
-        nginx-plus-module-xslt \
-        nginx-plus-module-xslt=${NGINX_VERSION}-r${PKG_RELEASE} \
+        # nginx-plus-module-njs=${NGINX_VERSION}.${NJS_VERSION}-r${NJS_PKG_RELEASE} \
+        # nginx-plus-module-otel \
+        # nginx-plus-module-otel=${NGINX_VERSION}.${OTEL_VERSION}-r${OTEL_PKG_RELEASE} \
+        # nginx-plus-module-perl \
+        # nginx-plus-module-perl=${NGINX_VERSION}-r${PKG_RELEASE} \
+        # nginx-plus-module-xslt \
+        # nginx-plus-module-xslt=${NGINX_VERSION}-r${PKG_RELEASE} \
     " \
     KEY_SHA512="e09fa32f0a0eab2b879ccbbc4d0e4fb9751486eedda75e35fac65802cc9faa266425edf83e261137a2f4d16281ce2c1a5f4502930fe75154723da014214f0655" \
     && wget -O /tmp/nginx_signing.rsa.pub https://nginx.org/keys/nginx_signing.rsa.pub \
@@ -49,7 +49,7 @@ RUN --mount=type=secret,id=nginx-crt,dst=cert.pem \
         echo "key verification failed!"; \
         exit 1; \
     fi \
-    && cat cert.pem > /etc/apk/cert.pem \
+    && cat cert.pem > /etc/apk/cert.crt \
     && cat cert.key > /etc/apk/cert.key \
     && apk add -X "https://pkgs.nginx.com/plus/alpine/v$(egrep -o '^[0-9]+\.[0-9]+' /etc/alpine-release)/main" --no-cache $nginxPackages \
     && if [ -f "/etc/apk/keys/nginx_signing.rsa.pub" ]; then rm -f /etc/apk/keys/nginx_signing.rsa.pub; fi \
@@ -65,6 +65,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx /etc/nginx/
 
 EXPOSE 80
+EXPOSE 8080
 
 STOPSIGNAL SIGQUIT
 
