@@ -13,7 +13,7 @@ spec:
         app: nginx
     spec:
       containers:
-      - name: websocket
+      - name: nginx
         image: ghcr.io/chanwittt/demo-nginx:latest
         ports:
         - containerPort: 80
@@ -21,6 +21,7 @@ spec:
         - mountPath: /etc/nginx
           name: nginx-shared
           readOnly: true
+      imagePullPolicy: Always
       imagePullSecrets:
       - name: github-package
       volumes:
