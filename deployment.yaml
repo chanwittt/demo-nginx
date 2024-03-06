@@ -15,13 +15,13 @@ spec:
       containers:
       - name: nginx
         image: ghcr.io/chanwittt/demo-nginx:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         volumeMounts:
         - mountPath: /etc/nginx
           name: nginx-shared
           readOnly: true
-      imagePullPolicy: Always
       imagePullSecrets:
       - name: github-package
       volumes:
