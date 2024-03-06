@@ -63,7 +63,8 @@ RUN --mount=type=secret,id=nginx-crt,dst=cert.pem \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx /etc/nginx/
-
+RUN mkdir /usr/share/nginx/vdo
+COPY demo.mp4 /usr/share/nginx/vdo
 EXPOSE 80
 
 STOPSIGNAL SIGQUIT
