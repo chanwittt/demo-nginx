@@ -17,7 +17,12 @@ spec:
         image: ghcr.io/chanwittt/demo-nginx:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        - name: dashboard
+          containerPort: 8080
       imagePullSecrets:
       - name: github-package
 ---
@@ -30,7 +35,12 @@ spec:
   ports:
   - port: 80
     targetPort: 80
-    protocol: TCP
     name: http
+  - port: 443
+    targetPort: 443
+    name: https
+  - port: 8080
+    targetPort: 8080
+    name: http-dashboard
   selector:
     app: nginx
